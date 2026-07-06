@@ -7,6 +7,7 @@
 # Usage:
 #   ./install.sh                 # symlink all skills into pi (~/.agents/skills)
 #   ./install.sh --agent claude  # install into Claude Code (~/.claude/skills)
+#   ./install.sh --agent opencode # install into opencode (~/.config/opencode/skills)
 #   ./install.sh --copy          # copy instead of symlink (a snapshot; no auto-updates)
 #   ./install.sh --dir <path>    # install into an explicit skills directory
 #
@@ -32,8 +33,9 @@ done
 
 if [ -z "$TARGET_DIR" ]; then
   case "$AGENT" in
-    pi)     TARGET_DIR="$HOME/.agents/skills" ;;
-    claude) TARGET_DIR="$HOME/.claude/skills" ;;
+    pi)       TARGET_DIR="$HOME/.agents/skills" ;;
+    claude)   TARGET_DIR="$HOME/.claude/skills" ;;
+    opencode) TARGET_DIR="$HOME/.config/opencode/skills" ;;
     *) echo "Unknown agent '$AGENT'. Use --dir <path> for a custom location." >&2; exit 1 ;;
   esac
 fi

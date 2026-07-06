@@ -47,6 +47,7 @@ git clone git@github.com:abbiesims/figma-to-vanilla.git
 cd figma-to-vanilla
 ./install.sh                 # symlink all skills into pi (~/.agents/skills)
 ./install.sh --agent claude  # Claude Code (~/.claude/skills)
+./install.sh --agent opencode # opencode (~/.config/opencode/skills)
 ./install.sh --copy          # copy a snapshot instead of symlinking
 ./install.sh --dir <path>    # any explicit skills directory
 ```
@@ -59,14 +60,16 @@ lets you commit edits back. Use `--copy` for a fixed snapshot.
 Skills are just files, so you can place them by hand:
 
 ```bash
-ln -s "$PWD/skills/figma-to-vanilla" ~/.agents/skills/figma-to-vanilla   # pi
-ln -s "$PWD/skills/figma-to-vanilla" ~/.claude/skills/figma-to-vanilla   # Claude Code
+ln -s "$PWD/skills/figma-to-vanilla" ~/.agents/skills/figma-to-vanilla          # pi
+ln -s "$PWD/skills/figma-to-vanilla" ~/.claude/skills/figma-to-vanilla          # Claude Code
+ln -s "$PWD/skills/figma-to-vanilla" ~/.config/opencode/skills/figma-to-vanilla # opencode
 ```
 
 Per-harness skills directories:
 
 - **pi**: `~/.agents/skills/` (global) or a project-local skills dir
 - **Claude Code**: `~/.claude/skills/` or `.claude/skills/` in a project
+- **opencode** (v1.0.190+): `~/.config/opencode/skills/` (global), `.opencode/skills/` (project), or `.claude/skills/`
 - **Any agent without skill support**: open the skill's `SKILL.md` and paste it as context, or point the agent at the file
 
 ## Set up Figma access (required)
@@ -110,7 +113,7 @@ back to structural checks otherwise).
 
 ## Requirements
 
-- **A supported agent** — pi, Claude Code, or any agent that can read a skill folder (or accept `SKILL.md` as pasted context).
+- **A supported agent** — pi, Claude Code, opencode, or any agent that can read a skill folder (or accept `SKILL.md` as pasted context).
 - **Figma access** (for `figma-to-vanilla`): in pi, the `pi-mono-figma` package (`pi install npm:pi-mono-figma`, then `/figma-auth --force`); in other agents, the [Figma MCP server](https://modelcontextprotocol.io/). Both expose equivalent `figma_*` capabilities.
 - **A headless browser** (optional, for the visual-validation harness): `google-chrome` / `chromium`, plus `npx sass-embedded` to compile the repo's SCSS.
 
