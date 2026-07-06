@@ -1,12 +1,7 @@
-# Canonical agent skills
+# Figma to Vanilla skill
 
-Portable [Agent Skills](https://docs.claude.com/en/docs/agents-and-tools/agent-skills/overview)
-for the webteam. A skill is a plain folder with a `SKILL.md` (YAML frontmatter
-`name` + `description`, then Markdown instructions) plus optional reference
-files. The format is agent-agnostic — it works with pi, Claude Code, and any
+The format of this skill is agent-agnostic — it works with pi, Claude Code, OpenCode and any
 agent that supports skills (or as pasted context for those that don't).
-
-## Skills
 
 | Skill | What it does |
 |---|---|
@@ -25,17 +20,7 @@ pi can install skills straight from git — no clone or symlink needed:
 pi install git:github.com/abbiesims/figma-to-vanilla
 ```
 
-To share with your whole team on a project, install into **project** settings so
-it's committed to `.pi/settings.json` and pi auto-installs it for anyone who
-trusts the project:
-
-```bash
-pi install -l git:github.com/abbiesims/figma-to-vanilla
-```
-
-Update to a newer version with the same command (optionally pin a ref, e.g.
-`git:github.com/abbiesims/figma-to-vanilla@v1`). Manage what's enabled with
-`pi config`.
+Update to a newer version with the same command. Manage what's enabled with `pi config`.
 
 ### Option 2 — install script (any agent, any location)
 
@@ -75,24 +60,48 @@ Per-harness skills directories:
 ## Set up Figma access (required)
 
 The skill reads designs directly from Figma, so every user needs the Figma tools
-and their **own** personal access token. Nothing about auth is stored in this
-repo — it's per-person.
+connected to their agent and their **own** Figma credentials. Nothing about auth
+is stored in this repo — it's per-person. Follow the path for your agent.
+
+### pi
 
 1. **Install the Figma tools** (once):
    ```bash
    pi install npm:pi-mono-figma
    ```
-   (Other agents: connect the [Figma MCP server](https://modelcontextprotocol.io/) instead — same `figma_*` capabilities.)
-
 2. **Create a Figma token**: in Figma, go to **Settings → Security → Personal access tokens → Generate new token**, with at least **read** access to file content. Copy it (you only see it once).
-
 3. **Store the token securely** (once):
    ```
    /figma-auth --force
    ```
    Paste the token into the secure prompt. **Don't** paste tokens into the chat. If you skip this, the skill will prompt you to authenticate on its first Figma call.
 
-4. Make sure you have at least **view access** to the Figma file you want to implement.
+### opencode (and other MCP-based agents)
+
+There is no `pi-mono-figma` equivalent — opencode is MCP-native, so you connect
+Figma's official MCP server instead and its `figma` tools appear automatically.
+
+1. **Add the Figma remote MCP server** to your opencode config — `~/.config/opencode/opencode.json` (global) or `opencode.json` at the project root:
+   ```json
+   {
+     "$schema": "https://opencode.ai/config.json",
+     "mcp": {
+       "figma": {
+         "type": "remote",
+         "url": "https://mcp.figma.com/mcp",
+         "enabled": true
+       }
+     }
+   }
+   ```
+   (Or run `opencode mcp add` to set it up interactively.)
+2. **Authenticate**: Figma's remote server uses an **OAuth flow** — on first use you'll be prompted to sign in to Figma in your browser. No manual token step needed.
+
+The remote server (`https://mcp.figma.com/mcp`) is Figma's recommended, no-desktop-app option; a desktop-app-based local server also exists for enterprise cases. See the [Figma MCP server docs](https://developers.figma.com/docs/figma-mcp-server/). The remote tool names may differ slightly from pi's `figma_*` names, but the skill's instructions are capability-based, so the agent maps them to whatever the connected server exposes.
+
+### All agents
+
+Make sure you have at least **view access** to the Figma file you want to implement.
 
 ## Using the skill
 
@@ -103,7 +112,7 @@ implement the design. Example prompt:
 
 Tips:
 - **Copy the URL of a specific frame/node** (right-click a frame in Figma → *Copy link to selection*) so the skill targets exactly what you want.
-- Run the agent from **inside the target repo** (e.g. the `stores` monorepo) so it can read the installed `@canonical/*` components and write files in the right place.
+- Run the agent from **inside the target repo** so it can read the installed `@canonical/*` components and write files in the right place. For my personal setup, I have added Stores repos and all related Python modules into one directory and I run the skill from that high-level directory.
 - The skill will: parse the URL → render the node → pull structured design context → map elements to `@canonical/store-components` / `@canonical/react-components` / Vanilla classes → write the code → validate its output against the design and iterate.
 - It deliberately **minimises custom CSS** and reuses existing components; if something has no component equivalent it will flag it as a shared-library gap rather than hand-rolling CSS.
 
@@ -114,10 +123,5 @@ back to structural checks otherwise).
 ## Requirements
 
 - **A supported agent** — pi, Claude Code, opencode, or any agent that can read a skill folder (or accept `SKILL.md` as pasted context).
-- **Figma access** (for `figma-to-vanilla`): in pi, the `pi-mono-figma` package (`pi install npm:pi-mono-figma`, then `/figma-auth --force`); in other agents, the [Figma MCP server](https://modelcontextprotocol.io/). Both expose equivalent `figma_*` capabilities.
+- **Figma access** (for `figma-to-vanilla`): in pi, the `pi-mono-figma` package (`pi install npm:pi-mono-figma`, then `/figma-auth --force`); in other agents, the [Figma MCP server](https://developers.figma.com/docs/figma-mcp-server/). Both expose equivalent `figma_*` capabilities.
 - **A headless browser** (optional, for the visual-validation harness): `google-chrome` / `chromium`, plus `npx sass-embedded` to compile the repo's SCSS.
-
-## Contributing
-
-Edit `skills/<name>/SKILL.md`, commit, push. If you installed via symlink your
-local agent picks up changes immediately.
