@@ -14,45 +14,66 @@ agent that supports skills (or as pasted context for those that don't).
 
 ## Install
 
-Clone this repo **anywhere** you like, then run the installer. It resolves paths
-relative to itself, so your clone location doesn't matter.
+Pick the option that matches your agent. Replace `canonical/agent-skills` with
+the repo's real location if it differs.
+
+### Option 1 — pi package (recommended for pi users)
+
+pi can install skills straight from git — no clone or symlink needed:
+
+```bash
+pi install git:github.com/canonical/agent-skills
+```
+
+To share with your whole team on a project, install into **project** settings so
+it's committed to `.pi/settings.json` and pi auto-installs it for anyone who
+trusts the project:
+
+```bash
+pi install -l git:github.com/canonical/agent-skills
+```
+
+Update to a newer version with the same command (optionally pin a ref, e.g.
+`git:github.com/canonical/agent-skills@v1`). Manage what's enabled with
+`pi config`.
+
+### Option 2 — install script (any agent, any location)
+
+Clone this repo **anywhere**, then run the installer. It resolves paths relative
+to itself, so your clone location doesn't matter:
 
 ```bash
 git clone git@github.com:canonical/agent-skills.git
 cd agent-skills
 ./install.sh                 # symlink all skills into pi (~/.agents/skills)
-```
-
-Options:
-
-```bash
-./install.sh --agent claude  # install into Claude Code (~/.claude/skills)
-./install.sh --copy          # copy a snapshot instead of symlinking (no auto-updates)
-./install.sh --dir <path>    # install into an explicit skills directory
+./install.sh --agent claude  # Claude Code (~/.claude/skills)
+./install.sh --copy          # copy a snapshot instead of symlinking
+./install.sh --dir <path>    # any explicit skills directory
 ```
 
 Symlinking (the default) keeps you on the latest version after a `git pull` and
-lets you commit edits back. Use `--copy` if you'd rather take a fixed snapshot.
+lets you commit edits back. Use `--copy` for a fixed snapshot.
 
-### Manual install / other agents
+### Option 3 — manual / agents without skill support
 
-The installer only creates symlinks or copies — you can do it by hand too. Skills
-live in these directories per harness:
+Skills are just files, so you can place them by hand:
+
+```bash
+ln -s "$PWD/skills/figma-to-vanilla" ~/.agents/skills/figma-to-vanilla   # pi
+ln -s "$PWD/skills/figma-to-vanilla" ~/.claude/skills/figma-to-vanilla   # Claude Code
+```
+
+Per-harness skills directories:
 
 - **pi**: `~/.agents/skills/` (global) or a project-local skills dir
 - **Claude Code**: `~/.claude/skills/` or `.claude/skills/` in a project
 - **Any agent without skill support**: open the skill's `SKILL.md` and paste it as context, or point the agent at the file
 
-```bash
-# e.g. pi, manually
-ln -s "$PWD/skills/figma-to-vanilla" ~/.agents/skills/figma-to-vanilla
-```
-
 ## Requirements
 
-`figma-to-vanilla` needs Figma access:
-- **pi**: `pi install npm:pi-mono-figma`, then `/figma-auth --force`
-- **other agents**: the Figma MCP server (MCP is cross-agent)
+- **A supported agent** — pi, Claude Code, or any agent that can read a skill folder (or accept `SKILL.md` as pasted context).
+- **Figma access** (for `figma-to-vanilla`): in pi, the `pi-mono-figma` package (`pi install npm:pi-mono-figma`, then `/figma-auth --force`); in other agents, the [Figma MCP server](https://modelcontextprotocol.io/). Both expose equivalent `figma_*` capabilities.
+- **A headless browser** (optional, for the visual-validation harness): `google-chrome` / `chromium`, plus `npx sass-embedded` to compile the repo's SCSS.
 
 ## Contributing
 

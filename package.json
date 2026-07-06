@@ -1,0 +1,10 @@
+{
+  "name": "canonical-agent-skills",
+  "version": "0.1.0",
+  "description": "Portable agent skills for the Canonical webteam (Figma-to-Vanilla, etc.)",
+  "private": true,
+  "keywords": ["pi-package"],
+  "pi": {
+    "skills": ["./skills"]
+  }
+}
