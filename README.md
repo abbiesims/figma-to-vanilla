@@ -14,23 +14,38 @@ agent that supports skills (or as pasted context for those that don't).
 
 ## Install
 
-Clone the repo, then symlink (preferred) or copy a skill into your agent's
-skills directory. Symlinking keeps you on the latest version and lets you commit
-edits back.
+Clone this repo **anywhere** you like, then run the installer. It resolves paths
+relative to itself, so your clone location doesn't matter.
 
 ```bash
-git clone git@github.com:canonical/agent-skills.git ~/canonical/agent-skills
+git clone git@github.com:canonical/agent-skills.git
+cd agent-skills
+./install.sh                 # symlink all skills into pi (~/.agents/skills)
 ```
 
-Install paths per harness:
+Options:
+
+```bash
+./install.sh --agent claude  # install into Claude Code (~/.claude/skills)
+./install.sh --copy          # copy a snapshot instead of symlinking (no auto-updates)
+./install.sh --dir <path>    # install into an explicit skills directory
+```
+
+Symlinking (the default) keeps you on the latest version after a `git pull` and
+lets you commit edits back. Use `--copy` if you'd rather take a fixed snapshot.
+
+### Manual install / other agents
+
+The installer only creates symlinks or copies — you can do it by hand too. Skills
+live in these directories per harness:
 
 - **pi**: `~/.agents/skills/` (global) or a project-local skills dir
 - **Claude Code**: `~/.claude/skills/` or `.claude/skills/` in a project
-- **Other / no skill support**: open `SKILL.md` and paste it as context, or point the agent at the file
+- **Any agent without skill support**: open the skill's `SKILL.md` and paste it as context, or point the agent at the file
 
 ```bash
-# pi example
-ln -s ~/canonical/agent-skills/skills/figma-to-vanilla ~/.agents/skills/figma-to-vanilla
+# e.g. pi, manually
+ln -s "$PWD/skills/figma-to-vanilla" ~/.agents/skills/figma-to-vanilla
 ```
 
 ## Requirements
