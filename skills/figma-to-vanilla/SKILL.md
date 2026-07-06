@@ -60,13 +60,22 @@ If a design element is **not** an instance of a Vanilla library component, that 
 
 ## Prerequisites
 
-Before starting, confirm `pi-mono-figma` is available by checking that `figma_parse_url` is a known tool. If it is not, tell the user to run:
+Ensure both the Figma tooling **and** authentication are in place *before* starting the workflow. Don't begin step 1 until both checks pass — otherwise the run will fail partway through on the first Figma call.
 
-```
-pi install npm:pi-mono-figma
-```
+1. **Tooling.** Confirm the Figma tools are available by checking that `figma_parse_url` is a known tool. If it is not, tell the user to install them and stop until they have:
 
-Then ask them to run `/figma-auth --force` to store their Figma personal access token.
+   ```
+   pi install npm:pi-mono-figma
+   ```
+
+   (Other agents: connect the Figma MCP server, which exposes the equivalent `figma_*` capabilities.)
+
+2. **Authentication.** Each user needs their **own** Figma personal access token (per-person; nothing about auth is stored in this skill or repo). Verify auth up front rather than waiting for a mid-task failure:
+   - Do a lightweight auth probe — e.g. call `figma_parse_url` on the user's URL, then attempt a minimal `figma_get_design_context` / `figma_render_nodes` call.
+   - If any Figma call reports missing, expired, or invalid credentials, trigger the secure auth prompt (`figma_configure_auth`, or tell the user to run `/figma-auth --force` in pi) and wait for them to store a token before continuing.
+   - The token needs read access to file content, and the user must have at least view access to the target Figma file. Never ask the user to paste a token into the chat — always use the secure auth prompt.
+
+Only once tooling and auth are confirmed, proceed to the workflow.
 
 ## Workflow
 
