@@ -14,7 +14,7 @@ agent that supports skills (or as pasted context for those that don't).
 
 ## Install
 
-Pick the option that matches your agent. Replace `abbiesims/agent-skills` with
+Pick the option that matches your agent. Replace `abbiesims/figma-to-vanilla` with
 the repo's real location if it differs.
 
 ### Option 1 — pi package (recommended for pi users)
@@ -22,7 +22,7 @@ the repo's real location if it differs.
 pi can install skills straight from git — no clone or symlink needed:
 
 ```bash
-pi install git:github.com/abbiesims/agent-skills
+pi install git:github.com/abbiesims/figma-to-vanilla
 ```
 
 To share with your whole team on a project, install into **project** settings so
@@ -30,11 +30,11 @@ it's committed to `.pi/settings.json` and pi auto-installs it for anyone who
 trusts the project:
 
 ```bash
-pi install -l git:github.com/abbiesims/agent-skills
+pi install -l git:github.com/abbiesims/figma-to-vanilla
 ```
 
 Update to a newer version with the same command (optionally pin a ref, e.g.
-`git:github.com/abbiesims/agent-skills@v1`). Manage what's enabled with
+`git:github.com/abbiesims/figma-to-vanilla@v1`). Manage what's enabled with
 `pi config`.
 
 ### Option 2 — install script (any agent, any location)
@@ -43,7 +43,7 @@ Clone this repo **anywhere**, then run the installer. It resolves paths relative
 to itself, so your clone location doesn't matter:
 
 ```bash
-git clone git@github.com:abbiesims/agent-skills.git
+git clone git@github.com:abbiesims/figma-to-vanilla.git
 cd agent-skills
 ./install.sh                 # symlink all skills into pi (~/.agents/skills)
 ./install.sh --agent claude  # Claude Code (~/.claude/skills)

@@ -1,5 +1,5 @@
 {
-  "name": "canonical-agent-skills",
+  "name": "figma-to-vanilla",
   "version": "0.1.0",
   "description": "Portable agent skills for the Canonical webteam (Figma-to-Vanilla, etc.)",
   "private": true,
