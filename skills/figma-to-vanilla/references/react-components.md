@@ -4,6 +4,8 @@ Package: `@canonical/react-components`
 Storybook: https://canonical.github.io/react-components  
 Source: https://github.com/canonical/react-components
 
+Use shared components instead of recreating their markup or styling with custom CSS. Examples here are illustrative: confirm exports, props, and behavior against the target repo's installed `.d.ts` files before use. Prefer supported props, children, and Vanilla utilities; do not override internal selectors to chase pixels. Follow the source priority and custom-CSS approval gate in `../SKILL.md`.
+
 All components are imported from `@canonical/react-components`:
 ```tsx
 import { Button, Card, Notification } from "@canonical/react-components";
@@ -104,7 +106,7 @@ import { Notification } from "@canonical/react-components";
   Proceed with care.
 </Notification>
 
-<!-- Dismissible -->
+{/* Dismissible */}
 <Notification
   severity="information"
   title="Info"
@@ -113,7 +115,7 @@ import { Notification } from "@canonical/react-components";
   Message.
 </Notification>
 
-<!-- Inline (no border/background) -->
+{/* Inline (no border/background) */}
 <Notification severity="caution" title="Warning" inline>
   Brief warning.
 </Notification>

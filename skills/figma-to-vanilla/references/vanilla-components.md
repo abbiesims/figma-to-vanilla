@@ -5,6 +5,10 @@ Source: https://github.com/canonical/vanilla-framework
 
 All patterns use the `p-` prefix. Layouts use `l-`. Utilities use `u-`.
 
+**Use these existing patterns instead of custom CSS.** Check the target repo's installed Vanilla version and compiled stylesheet before using a class; this reference is a starting point, not a guarantee that every pattern or modifier ships in that version. Use documented variants, grid classes, and spacing utilities rather than overriding component internals. Custom CSS requires the gap review and user approval in `../SKILL.md`.
+
+Vanilla supplies styles, not JavaScript behavior. Tabs, modals, menus, navigation toggles, and accordions also need the repo's interaction logic, keyboard handling, and focus management; these markup examples alone are not complete interactive implementations.
+
 ---
 
 ## Grid
