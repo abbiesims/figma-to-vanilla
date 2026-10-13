@@ -1,6 +1,6 @@
 # Figma to Vanilla skill
 
-The format of this skill is agent-agnostic — it works with pi, Claude Code, OpenCode and any
+The format of this skill is agent-agnostic — it works with pi, Claude Code, opencode and any
 agent that supports skills (or as pasted context for those that don't).
 
 | Skill | What it does |
@@ -11,6 +11,52 @@ agent that supports skills (or as pasted context for those that don't).
 
 Pick the option that matches your agent. Replace `abbiesims/figma-to-vanilla` with
 the repo's real location if it differs.
+
+### OpenCode quick start
+
+These steps are for Linux, macOS, or Windows with WSL.
+
+1. **Install OpenCode.** If it is not already installed, install a supported
+   [Node.js LTS release](https://nodejs.org/) (includes npm), then run:
+
+   ```bash
+   npm install -g opencode-ai
+   opencode --version
+   ```
+
+   This installs OpenCode 1. If you use OpenCode 2 or a team-managed installation,
+   keep that installation instead. See the [OpenCode docs](https://opencode.ai/docs/)
+   or [OpenCode 2 docs](https://opencode.ai/v2/docs/).
+
+2. **Install this skill.** Clone the repo and run the OpenCode installer:
+
+   ```bash
+   git clone https://github.com/abbiesims/figma-to-vanilla.git
+   cd figma-to-vanilla
+   ./install.sh --agent opencode
+   ```
+
+   If you already cloned it, run the installer from that clone. It links the
+   skill into `~/.config/opencode/skills/figma-to-vanilla/`. The installer replaces
+   any existing skill at that destination, so preserve local edits first.
+   If the skill is already installed in `~/.agents/skills/`, OpenCode discovers
+   it there too; do not install a duplicate.
+
+3. **Connect Figma.** Follow the
+   [OpenCode Figma setup guide](skills/figma-to-vanilla/README.md#install-in-opencode),
+   starting at step 3. Skip this if your existing Figma tools already work.
+   Installing the skill alone does not connect Figma.
+
+4. **Start OpenCode in your application repo.** Quit any running OpenCode session,
+   open a terminal in the repo you want to edit, and run:
+
+   ```bash
+   opencode
+   ```
+
+   Use `/connect` inside OpenCode to connect your model provider if needed. Then
+   ask it to use `figma-to-vanilla` with a link to your Figma frame. Restart
+   OpenCode after installing or updating skills or configuration.
 
 ### Option 1 — pi package (recommended for pi users)
 
@@ -76,28 +122,18 @@ is stored in this repo — it's per-person. Follow the path for your agent.
    ```
    Paste the token into the secure prompt. **Don't** paste tokens into the chat. If you skip this, the skill will prompt you to authenticate on its first Figma call.
 
-### opencode (and other MCP-based agents)
+### OpenCode (and other MCP-based agents)
 
-There is no `pi-mono-figma` equivalent — opencode is MCP-native, so you connect
-Figma's official MCP server instead and its `figma` tools appear automatically.
+Keep any working Figma connection. For OpenCode setup, follow the
+[Figma setup and troubleshooting guide](skills/figma-to-vanilla/README.md#install-in-opencode),
+starting at step 3. It includes a local MCP configuration and secure token entry.
+The documented local server is third-party; confirm your team allows it before use.
 
-1. **Add the Figma remote MCP server** to your opencode config — `~/.config/opencode/opencode.json` (global) or `opencode.json` at the project root:
-   ```json
-   {
-     "$schema": "https://opencode.ai/config.json",
-     "mcp": {
-       "figma": {
-         "type": "remote",
-         "url": "https://mcp.figma.com/mcp",
-         "enabled": true
-       }
-     }
-   }
-   ```
-   (Or run `opencode mcp add` to set it up interactively.)
-2. **Authenticate**: Figma's remote server uses an **OAuth flow** — on first use you'll be prompted to sign in to Figma in your browser. No manual token step needed.
-
-The remote server (`https://mcp.figma.com/mcp`) is Figma's recommended, no-desktop-app option; a desktop-app-based local server also exists for enterprise cases. See the [Figma MCP server docs](https://developers.figma.com/docs/figma-mcp-server/). The remote tool names may differ slightly from pi's `figma_*` names, but the skill's instructions are capability-based, so the agent maps them to whatever the connected server exposes.
+Figma's official remote MCP uses OAuth, but access depends on its supported-client
+catalog. Do not assume every MCP agent can connect. Check the
+[Figma MCP server docs](https://developers.figma.com/docs/figma-mcp-server/remote-server-installation/)
+for your agent. Tool names and capabilities vary by server; pi installation and
+authentication commands do not work in OpenCode.
 
 ### All agents
 
@@ -112,7 +148,7 @@ implement the design. Example prompt:
 
 Tips:
 - **Copy the URL of a specific frame/node** (right-click a frame in Figma → *Copy link to selection*) so the skill targets exactly what you want.
-- Run the agent from **inside the target repo** so it can read the installed `@canonical/*` components and write files in the right place. For my personal setup, I have added Stores repos and all related Python modules into one directory and I run the skill from that high-level directory.
+- Run the agent from **inside the target repo** so it can read the installed `@canonical/*` components and write files in the right place. For my personal setup, I have added Stores repos and all related Python modules into one directory and I run the skill from that parent directory.
 - The skill will: parse the URL → render the node → pull structured design context → map elements to `@canonical/store-components` / `@canonical/react-components` / Vanilla classes → write the code → validate its output against the design and iterate.
 - It deliberately **minimises custom CSS** and reuses existing components; if something has no component equivalent it will flag it as a shared-library gap rather than hand-rolling CSS.
 
@@ -123,5 +159,5 @@ back to structural checks otherwise).
 ## Requirements
 
 - **A supported agent** — pi, Claude Code, opencode, or any agent that can read a skill folder (or accept `SKILL.md` as pasted context).
-- **Figma access** (for `figma-to-vanilla`): in pi, the `pi-mono-figma` package (`pi install npm:pi-mono-figma`, then `/figma-auth --force`); in other agents, the [Figma MCP server](https://developers.figma.com/docs/figma-mcp-server/). Both expose equivalent `figma_*` capabilities.
+- **Figma access** (for `figma-to-vanilla`): in pi, the `pi-mono-figma` package (`pi install npm:pi-mono-figma`, then `/figma-auth --force`); in OpenCode, follow the [Figma setup guide](skills/figma-to-vanilla/README.md#install-in-opencode). Other agents need a compatible Figma connection; tool names and capabilities vary.
 - **A headless browser** (optional, for the visual-validation harness): `google-chrome` / `chromium`, plus `npx sass-embedded` to compile the repo's SCSS.
